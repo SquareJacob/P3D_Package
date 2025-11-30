@@ -4,11 +4,13 @@ import numpy as np
 from typing import List, Union, Dict
 
 class Webpage(Dash):
+    """ """
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
     
 class Graph(dcc.Graph):
+    """ """
     def __init__(self, figure: go.Figure = None, id:str = None, height: float = None, **kwargs):
         """ """
         style = {'height': f'{int(100 * height)}vh'}
@@ -17,10 +19,11 @@ class Graph(dcc.Graph):
         super().__init__(figure = figure, id = id, style = style, **kwargs)
 
 class DataTable(dash_table.DataTable):
+    """ """
     def __init__(self, columns:List[str] = None, data: List[Union[List, Dict]] = None, id:str = None, height: float = None, properties: Dict[str, any] = None, **kwargs):
         """ """
         column_data = []
-        for i, name in columns:
+        for i, name in enumerate(columns):
             column = dict(id = name, name = name)
             for property, value in properties.items():
                 if isinstance(value, list):
@@ -32,7 +35,7 @@ class DataTable(dash_table.DataTable):
         for row in data:
             frow = {}
             if isinstance(row, list):
-                for i in len(row):
+                for i in range(len(row)):
                     frow[name[i]] = row[i]
             elif isinstance(row, dict):
                 frow = row

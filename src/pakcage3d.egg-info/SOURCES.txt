@@ -1,9 +1,0 @@
-pyproject.toml
-src/Package3D/__init__.py
-src/Package3D/graphing.py
-src/Package3D/webpage.py
-src/pakcage3d.egg-info/PKG-INFO
-src/pakcage3d.egg-info/SOURCES.txt
-src/pakcage3d.egg-info/dependency_links.txt
-src/pakcage3d.egg-info/requires.txt
-src/pakcage3d.egg-info/top_level.txt
