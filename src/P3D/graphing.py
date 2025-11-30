@@ -49,7 +49,7 @@ class Graph(go.Figure):
 class Surface(go.Surface):
     def __init__(self, x, y, z, showscale = False, **kwargs):
         """ """
-        super().__init__(x = x, y = y, z = z, showscale = showscale, **kwargs)
+        super().__init__(x = x, y = y, z = 2*z, showscale = showscale, **kwargs)
 
 class Line(go.Scatter3d):
     """Assumes a 3D line"""
