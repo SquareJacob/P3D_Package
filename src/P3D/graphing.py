@@ -3,7 +3,7 @@ import numpy as np
 from typing import List, Union
 
 
-class Graph(go.Figure):
+class Figure(go.Figure):
     """Assumes a 3D figure"""
     def __init__(self, data:List[go.Trace] = None, **kwargs):
         """Assumes a 3D figure"""
