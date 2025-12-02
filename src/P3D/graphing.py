@@ -1,14 +1,14 @@
 import plotly.graph_objects as go
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Union
+from typing import List, Union, Literal
 
 
 class Figure(go.Figure):
-    """A 3D graph"""
+    """A figure"""
     def __init__(self, data:List[go.Trace] = None, **kwargs):
         """
-        Creates a 3D figure
+        Creates a figure
 
         Parameters
         ----------
@@ -29,13 +29,17 @@ class Figure(go.Figure):
         x,y,z
             Bounds that can be updated, if provided, as a list of 2 numbers
         """
-        self.update_layout(
-            scene = dict(
-                xaxis=dict(range=x),
-                yaxis=dict(range=y),
-                zaxis=dict(range=z),
+        type = self.type()
+        params = {}
+        if x: params['xaxis'] = dict(range=x)
+        if y: params['yaxis'] = dict(range=y)
+        if z: params['zaxis'] = dict(range=z)
+        if type == '3d':
+            self.update_layout(
+                scene = params
             )
-        )
+        else:
+            self.update_layout(**params)
 
     def add_slider(self, slider_values:List[float], traces:List[Union[go.Trace, List[go.Trace]]], initial_step:int = 0, prefix:str = "t: ") -> None:
         """
@@ -77,6 +81,17 @@ class Figure(go.Figure):
             sliders = list(self.layout.sliders) + [dict(steps = steps, active = initial_step, currentvalue={"prefix": prefix})]
         )
 
+    def type(self) -> Literal['2d', '3d']:
+        """
+        Returns what type of figure this is
+        
+        :return type: The type of figure this is, as a string
+        """
+        for trace in self.data:
+            if ('3d' in trace.type) or ('3D' in trace.type):
+                return '3d'
+        return '2d'
+
 class Surface(go.Surface):
     """A 3D Surface"""
     def __init__(self, x:NDArray[np.floating], y:NDArray[np.floating], z:NDArray[np.floating], showscale:bool = False, **kwargs):
@@ -93,8 +108,26 @@ class Surface(go.Surface):
         """
         super().__init__(x = x, y = y, z = z, showscale = showscale, **kwargs)
 
-class Line(go.Scatter3d):
-    """A 3D line"""
+class Line():
+    def __new__(cls, x:NDArray[np.floating], y:NDArray[np.floating], z:NDArray[np.floating] = None, **kwargs):
+        """
+        Creates a new 2d or 3d line.
+        
+        Parameters
+        ----------
+        x,y,z
+            1d arrays all of the same length. 
+            If z is provided, the line is 3d, else it is 2d.
+        """
+        if cls is Line:
+            if z is None:
+                return _Line2d(x, y, **kwargs)
+            else:
+                return _Line3d(x, y, z, **kwargs)
+                
+        return super().__new__(cls)
+
+class _Line3d(go.Scatter3d, Line):
     def __init__(self, x:NDArray[np.floating], y:NDArray[np.floating], z:NDArray[np.floating], **kwargs):
         """
         Creates a 3D line
@@ -106,3 +139,18 @@ class Line(go.Scatter3d):
             Each ordered triple is a point on the line
         """
         super().__init__(x = x, y = y, z = z, mode='lines', **kwargs)
+
+class _Line2d(go.Scatter, Line):
+        def __init__(self, x:NDArray[np.floating], y:NDArray[np.floating], **kwargs):
+            """
+            Creates a 2D line
+
+            Parameters
+            ----------
+            x,y
+                1d arrays all of the same length.
+                Each ordered pair is a point on the line
+            """
+            super().__init__(x = x, y = y, mode='lines', **kwargs)
+           
+    

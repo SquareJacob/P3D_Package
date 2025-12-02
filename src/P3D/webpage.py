@@ -42,7 +42,7 @@ class Graph(dcc.Graph):
 
 class DataTable(dash_table.DataTable):
     """Table component for webpage"""
-    def __init__(self, columns:List[str] = [], data: List[Union[List, Dict]] = [], id:str = None, height: float = None, column_ids:Dict[Union[str, int], str] = {}, properties: Dict[str, any] = {}, **kwargs):
+    def __init__(self, columns:List[str] = [], data: List[Union[List, Dict]] = [], id:str = None, height: float = None, column_ids:Union[Dict[Union[str, int], str], List[str]] = {}, properties: Dict[str, any] = {}, **kwargs):
         """
         Creates a table component for webpage
 
@@ -61,7 +61,8 @@ class DataTable(dash_table.DataTable):
             the proportion of the height of the window to take up; 0 to 1
         column_ids
             ids to use instead of default ids.
-            Can specify column by its name or index
+            Can specify column by its name or index.
+            Alternatively list of ids, in same order as names
         properties
             Assigns properties to columns.
             Each key is a property, and each value is what columns has that property.
@@ -72,6 +73,10 @@ class DataTable(dash_table.DataTable):
         column_data = []
         ids = []
         tID = id
+        if isinstance(column_ids, list):
+            column_ids = {
+                i : cID for i, cID in enumerate(column_ids)
+            }
         for i, name in enumerate(columns):
             if i in column_ids.keys():
                 id = column_ids[i]
