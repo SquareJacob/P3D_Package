@@ -13,13 +13,13 @@ from sympy.parsing.sympy_parser import (
 )
 
 class Webpage(Dash):
-    """A Dash webpage"""
+    """A Dash webpage, extends :dash:`dash.Dash<dash>`"""
     def __init__(self, **kwargs):
         """Creates A Dash webpage"""
         super().__init__(**kwargs)
     
 class Graph(dcc.Graph):
-    """Graph component for webpage"""
+    """Graph component for webpage, extends :dcc:`dash.dcc.Graph<graph>`"""
     def __init__(self, figure: go.Figure = None, id:str = None, height: float = None, **kwargs):
         """
         Creates a graph component for webpage
@@ -27,7 +27,7 @@ class Graph(dcc.Graph):
         Parameters
         ----------
         figure
-            The figure to use in this graph
+            The :class:`plotly.graph_objects.Figure` to use in this graph
         id
             the unique id to identify this graph with
         height
@@ -41,7 +41,7 @@ class Graph(dcc.Graph):
         super().__init__(figure = figure, id = id, style = style, **kwargs)
 
 class DataTable(dash_table.DataTable):
-    """Table component for webpage"""
+    """Table component for webpage, extends |table|_"""
     def __init__(self, columns:List[str] = [], data: List[Union[List, Dict]] = [], id:str = None, height: float = None, column_ids:Union[Dict[Union[str, int], str], List[str]] = {}, properties: Dict[str, any] = {}, **kwargs):
         """
         Creates a table component for webpage
@@ -109,9 +109,9 @@ class DataTable(dash_table.DataTable):
         super().__init__(columns=column_data, data=row_data, id = tID, style_table= style_table, **kwargs)
 
 class TextArea(dcc.Textarea):
-    """A text input area"""
-    symbols = {'sin', 'cos', 'ln', 'pi', 'exp', 'log'}
-    transforms = standard_transformations + (convert_xor, implicit_multiplication_application)
+    """A text input area, extends :dcc:`dash.dcc.TextArea<textarea>`"""
+    _symbols = {'sin', 'cos', 'ln', 'pi', 'exp', 'log'}
+    _transforms = standard_transformations + (convert_xor, implicit_multiplication_application)
     def __init__(self, value:str = None, id:str = None, height:float = None, **kwargs):
         """
         Creates A text input area
@@ -145,9 +145,9 @@ class TextArea(dcc.Textarea):
         as_string
             whether to return the raw sympy expression output, or the string output
         """
-        names = set(re.findall(r"[A-Za-z_]\w*", text)) - TextArea.symbols
+        names = set(re.findall(r"[A-Za-z_]\w*", text)) - TextArea._symbols
         local_dict = {name: sp.Symbol(name) for name in names}
-        text = parse_expr(text, local_dict, TextArea.transforms)
+        text = parse_expr(text, local_dict, TextArea._transforms)
         return str(text) if as_string else text
     
     @staticmethod
@@ -185,7 +185,7 @@ class TextArea(dcc.Textarea):
         Parameters
         ----------
         app
-            the app that will have both the textarea and the markdown area
+            the :dash:`dash.Dash<dash>` app that will have both the textarea and the markdown area
         id
             the unique id to identify this markdown with
         height

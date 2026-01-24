@@ -1,11 +1,13 @@
 import plotly.graph_objects as go
 import numpy as np
-from numpy.typing import NDArray
 from typing import List, Union, Literal
 
 
 class Figure(go.Figure):
-    """A figure"""
+    """
+    A figure.
+    This extends :class:`plotly.graph_objects.Figure`.
+    """
     def __init__(self, data:List[go.Trace] = None, **kwargs):
         """
         Creates a figure
@@ -13,7 +15,7 @@ class Figure(go.Figure):
         Parameters
         ----------
         data
-            List of traces for this figure to have
+            List of :class:`plotly.graph_objects.Trace` for this figure to have
         """
         super().__init__(data = data, **kwargs)
         self.update_layout(
@@ -50,7 +52,7 @@ class Figure(go.Figure):
         slider_values
             List of N values the slider should have
         traces
-            List of traces to add, and which slider value they should be visible on.
+            List of :class:`plotly.graph_objects.Trace` to add, and which slider value they should be visible on.
             Each element can be a list itself, meaning multiple traces are visible on that value
         initial_step
             Which step (0 to N-1) to start the slider on
@@ -93,8 +95,11 @@ class Figure(go.Figure):
         return '2d'
 
 class Surface(go.Surface):
-    """A 3D Surface"""
-    def __init__(self, x:NDArray[np.floating], y:NDArray[np.floating], z:NDArray[np.floating], showscale:bool = False, **kwargs):
+    """
+    A 3D Surface
+    This extends :class:`plotly.graph_objects.Figure`.
+    """
+    def __init__(self, x:np.ndarray[np.floating], y:np.ndarray[np.floating], z:np.ndarray[np.floating], showscale:bool = False, **kwargs):
         """
         Creates a 3D surface
 
@@ -109,9 +114,9 @@ class Surface(go.Surface):
         super().__init__(x = x, y = y, z = z, showscale = showscale, **kwargs)
 
 class Line():
-    def __new__(cls, x:NDArray[np.floating], y:NDArray[np.floating], z:NDArray[np.floating] = None, **kwargs):
+    def __new__(cls, x:np.ndarray[np.floating], y:np.ndarray[np.floating], z:np.ndarray[np.floating] = None, **kwargs):
         """
-        Creates a new 2d or 3d line.
+        Creates a new 2d (:class:`plotly.graph_objects.Scatter`) or 3d (:class:`plotly.graph_objects.Scatter3d`) line.
         
         Parameters
         ----------
@@ -128,7 +133,7 @@ class Line():
         return super().__new__(cls)
 
 class _Line3d(go.Scatter3d, Line):
-    def __init__(self, x:NDArray[np.floating], y:NDArray[np.floating], z:NDArray[np.floating], **kwargs):
+    def __init__(self, x:np.ndarray[np.floating], y:np.ndarray[np.floating], z:np.ndarray[np.floating], **kwargs):
         """
         Creates a 3D line
 
@@ -141,7 +146,7 @@ class _Line3d(go.Scatter3d, Line):
         super().__init__(x = x, y = y, z = z, mode='lines', **kwargs)
 
 class _Line2d(go.Scatter, Line):
-        def __init__(self, x:NDArray[np.floating], y:NDArray[np.floating], **kwargs):
+        def __init__(self, x:np.ndarray[np.floating], y:np.ndarray[np.floating], **kwargs):
             """
             Creates a 2D line
 

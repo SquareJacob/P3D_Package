@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>P3D.webpage &#8212; P3D  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for P3D.webpage</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dash</span><span class="p">,</span> <span class="n">dash_table</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sympy.parsing.sympy_parser</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">parse_expr</span><span class="p">,</span>
+    <span class="n">standard_transformations</span><span class="p">,</span>
+    <span class="n">implicit_multiplication_application</span><span class="p">,</span>
+    <span class="n">convert_xor</span><span class="p">,</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="Webpage">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.Webpage">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Webpage</span><span class="p">(</span><span class="n">Dash</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Dash webpage, extends :dash:`dash.Dash&lt;dash&gt;`&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates A Dash webpage&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Graph">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.Graph">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">(</span><span class="n">dcc</span><span class="o">.</span><span class="n">Graph</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Graph component for webpage, extends :dcc:`dash.dcc.Graph&lt;graph&gt;`&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a graph component for webpage</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        figure</span>
+<span class="sd">            The :class:`plotly.graph_objects.Figure` to use in this graph</span>
+<span class="sd">        id</span>
+<span class="sd">            the unique id to identify this graph with</span>
+<span class="sd">        height</span>
+<span class="sd">            the proportion of the height of the window to take up; 0 to 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">style</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="si">}</span><span class="s1">vh&#39;</span>
+        <span class="k">if</span> <span class="s2">&quot;style&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">style</span> <span class="o">=</span> <span class="n">style</span> <span class="o">|</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;style&quot;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">figure</span> <span class="o">=</span> <span class="n">figure</span><span class="p">,</span> <span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">style</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataTable">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.DataTable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataTable</span><span class="p">(</span><span class="n">dash_table</span><span class="o">.</span><span class="n">DataTable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Table component for webpage, extends |table|_&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span> <span class="nb">id</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">column_ids</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">properties</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a table component for webpage</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        columns</span>
+<span class="sd">            List of columns to use. </span>
+<span class="sd">            Each element is the column&#39;s name and default id</span>
+<span class="sd">        data</span>
+<span class="sd">            Each element of list is one row of the table.</span>
+<span class="sd">            Element can be a list of values based upon column order,</span>
+<span class="sd">            or a dictionary of values with keys as column ids</span>
+<span class="sd">        id</span>
+<span class="sd">            the unique id to identify this table with</span>
+<span class="sd">        height</span>
+<span class="sd">            the proportion of the height of the window to take up; 0 to 1</span>
+<span class="sd">        column_ids</span>
+<span class="sd">            ids to use instead of default ids.</span>
+<span class="sd">            Can specify column by its name or index.</span>
+<span class="sd">            Alternatively list of ids, in same order as names</span>
+<span class="sd">        properties</span>
+<span class="sd">            Assigns properties to columns.</span>
+<span class="sd">            Each key is a property, and each value is what columns has that property.</span>
+<span class="sd">            Value can be True, meaning to apply to all columns.</span>
+<span class="sd">            Value can be a list of indices and/or ids to choose columns.</span>
+<span class="sd">            Common properties are editable, renamable, deletable, and clearable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">column_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tID</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">column_ids</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">i</span> <span class="p">:</span> <span class="n">cID</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cID</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">column_ids</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">column_ids</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="nb">id</span> <span class="o">=</span> <span class="n">column_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">column_ids</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="nb">id</span> <span class="o">=</span> <span class="n">column_ids</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">id</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">for</span> <span class="nb">property</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">column</span><span class="p">[</span><span class="nb">property</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">id</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">column</span><span class="p">[</span><span class="nb">property</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">column_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+        <span class="n">row_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">frow</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)):</span>
+                    <span class="n">frow</span><span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">frow</span> <span class="o">=</span> <span class="n">row</span>
+            <span class="n">row_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frow</span><span class="p">)</span>
+        <span class="n">style_table</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">style_table</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="si">}</span><span class="s1">vh&#39;</span>
+        <span class="k">if</span> <span class="s2">&quot;style_table&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">style_table</span> <span class="o">=</span> <span class="n">style_table</span> <span class="o">|</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;style_table&quot;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column_data</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">row_data</span><span class="p">,</span> <span class="nb">id</span> <span class="o">=</span> <span class="n">tID</span><span class="p">,</span> <span class="n">style_table</span><span class="o">=</span> <span class="n">style_table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TextArea">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.TextArea">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TextArea</span><span class="p">(</span><span class="n">dcc</span><span class="o">.</span><span class="n">Textarea</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A text input area, extends :dcc:`dash.dcc.TextArea&lt;textarea&gt;`&quot;&quot;&quot;</span>
+    <span class="n">_symbols</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sin&#39;</span><span class="p">,</span> <span class="s1">&#39;cos&#39;</span><span class="p">,</span> <span class="s1">&#39;ln&#39;</span><span class="p">,</span> <span class="s1">&#39;pi&#39;</span><span class="p">,</span> <span class="s1">&#39;exp&#39;</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">}</span>
+    <span class="n">_transforms</span> <span class="o">=</span> <span class="n">standard_transformations</span> <span class="o">+</span> <span class="p">(</span><span class="n">convert_xor</span><span class="p">,</span> <span class="n">implicit_multiplication_application</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span><span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates A text input area</span>
+
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value</span>
+<span class="sd">            The initial text inside of this textbox</span>
+<span class="sd">        id</span>
+<span class="sd">            the unique id to identify this textarea with</span>
+<span class="sd">        height</span>
+<span class="sd">            the proportion of the height of the window to take up; 0 to 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">style</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="si">}</span><span class="s1">vh&#39;</span>
+        <span class="k">if</span> <span class="s2">&quot;style&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">style</span> <span class="o">=</span> <span class="n">style</span> <span class="o">|</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;style&quot;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span> <span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">style</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TextArea.convert">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.TextArea.convert">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">as_string</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">sp</span><span class="o">.</span><span class="n">Expr</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a normal math expression to a Python math expression</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text</span>
+<span class="sd">            the text to convert</span>
+<span class="sd">        as_string</span>
+<span class="sd">            whether to return the raw sympy expression output, or the string output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[A-Za-z_]\w*&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span> <span class="o">-</span> <span class="n">TextArea</span><span class="o">.</span><span class="n">_symbols</span>
+        <span class="n">local_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">}</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">local_dict</span><span class="p">,</span> <span class="n">TextArea</span><span class="o">.</span><span class="n">_transforms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">as_string</span> <span class="k">else</span> <span class="n">text</span></div>
+
+    
+<div class="viewcode-block" id="TextArea.evaluate">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.TextArea.evaluate">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates a normal math expression using the values</span>
+<span class="sd">        of the variables given.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text</span>
+<span class="sd">            the math expression to evaluate</span>
+<span class="sd">        variables</span>
+<span class="sd">            dictionary of variables names and their values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="k">return</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">TextArea</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">variables</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TextArea.latex">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.TextArea.latex">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">latex</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a normal math expression into a latex formula</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text</span>
+<span class="sd">            the math expression to convert        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">latex</span><span class="p">(</span><span class="n">TextArea</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">as_string</span> <span class="o">=</span> <span class="kc">False</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="TextArea.create_Markdown">
+<a class="viewcode-back" href="../../api/P3D.html#P3D.webpage.TextArea.create_Markdown">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_Markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span> <span class="p">:</span> <span class="n">Dash</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span><span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dcc</span><span class="o">.</span><span class="n">Markdown</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a markdown area that renders all text in this into a nice format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        app</span>
+<span class="sd">            the :dash:`dash.Dash&lt;dash&gt;` app that will have both the textarea and the markdown area</span>
+<span class="sd">        id</span>
+<span class="sd">            the unique id to identify this markdown with</span>
+<span class="sd">        height</span>
+<span class="sd">            the proportion of the height of the window to take up; 0 to 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">style</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="si">}</span><span class="s1">vh&#39;</span>
+        <span class="k">if</span> <span class="s2">&quot;style&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">style</span> <span class="o">=</span> <span class="n">style</span> <span class="o">|</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;style&quot;</span><span class="p">]</span>
+        <span class="n">markdown_area</span> <span class="o">=</span> <span class="n">dcc</span><span class="o">.</span><span class="n">Markdown</span><span class="p">(</span><span class="n">children</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">mathjax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nd">@app</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span>
+            <span class="n">Output</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span><span class="p">),</span>
+            <span class="n">Input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">edit</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="n">TextArea</span><span class="o">.</span><span class="n">latex</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">$&#39;</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">markdown_area</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">P3D</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">P3D</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Jacob Scherzer.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
