@@ -38,7 +38,11 @@ class Graph(dcc.Graph):
             style['height'] = f'{int(100 * height)}vh'
         if "style" in kwargs.keys():
             style = style | kwargs["style"]
-        super().__init__(figure = figure, id = id, style = style, **kwargs)
+        if figure:
+            kwargs['figure'] = figure
+        if id:
+            kwargs['id'] = id
+        super().__init__(style = style, **kwargs)
 
 class DataTable(dash_table.DataTable):
     """Table component for webpage, extends |table|_"""
@@ -72,7 +76,8 @@ class DataTable(dash_table.DataTable):
         """
         column_data = []
         ids = []
-        tID = id
+        if id:
+            kwargs['id'] = id
         if isinstance(column_ids, list):
             column_ids = {
                 i : cID for i, cID in enumerate(column_ids)
@@ -106,7 +111,7 @@ class DataTable(dash_table.DataTable):
             style_table['height'] = f'{int(100 * height)}vh'
         if "style_table" in kwargs.keys():
             style_table = style_table | kwargs["style_table"]
-        super().__init__(columns=column_data, data=row_data, id = tID, style_table= style_table, **kwargs)
+        super().__init__(columns=column_data, data=row_data, style_table= style_table, **kwargs)
 
 class TextArea(dcc.Textarea):
     """A text input area, extends :dcc:`dash.dcc.TextArea<textarea>`"""
@@ -131,7 +136,11 @@ class TextArea(dcc.Textarea):
             style['height'] = f'{int(100 * height)}vh'
         if "style" in kwargs.keys():
             style = style | kwargs["style"]
-        super().__init__(value = value, id = id, style = style, **kwargs)
+        if value:
+            kwargs['value'] = value
+        if id:
+            kwargs['id'] = id
+        super().__init__(style = style, **kwargs)
 
     @staticmethod
     def convert(text:str, as_string: bool = True) -> Union[str, sp.Expr]:
@@ -178,7 +187,7 @@ class TextArea(dcc.Textarea):
         """
         return sp.latex(TextArea.convert(text, as_string = False))
     
-    def create_Markdown(self, app : Dash, id:str, height:float = None, **kwargs) -> dcc.Markdown:
+    def create_Markdown(self, app : Dash, id:str = None, height:float = None, **kwargs) -> dcc.Markdown:
         """
         Creates a markdown area that renders all text in this into a nice format.
 
@@ -196,9 +205,11 @@ class TextArea(dcc.Textarea):
             style['height'] = f'{int(100 * height)}vh'
         if "style" in kwargs.keys():
             style = style | kwargs["style"]
-        markdown_area = dcc.Markdown(children = '', mathjax=True, id = id, style=style, **kwargs)
+        if id:
+            kwargs['id'] = id
+        markdown_area = dcc.Markdown(children = '', mathjax=True, style=style, **kwargs)
         @app.callback(
-            Output(id, 'children'),
+            Output(markdown_area.id, 'children'),
             Input(self.id, 'value')
         )
         def edit(data):
@@ -207,3 +218,30 @@ class TextArea(dcc.Textarea):
             except:
                 return ''
         return markdown_area
+    
+class Slider(dcc.Slider):
+    """A text input area, extends :dcc:`dash.dcc.Slider<slider>`"""
+    def __init__(self, min: float = 0, max: float = 1, value : float = None, step: float = None, marks : Union[dict, None] = dict(), id: str = None, **kwargs):
+        """
+        Creates A Dash Slider
+        
+        Parameters
+        ----------
+        min, max
+            bounds on the slider
+        value
+            initial value for slider
+        step
+            spacing between each step on slider
+        marks
+            optional dictionary to provide exact steps and labels; set to None for no labels at all
+        id
+            the unique id to identify this slider with
+        """
+        kwargs["updatemode"] =  kwargs.get("updatemode", "drag")
+        if id:
+            kwargs['id'] = id
+        if value:
+            kwargs['value'] = value
+        kwargs['step'] = step
+        super().__init__(min = min, max = max, marks = marks, **kwargs)

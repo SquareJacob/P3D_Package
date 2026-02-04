@@ -18,6 +18,7 @@ class Figure(go.Figure):
             List of :class:`plotly.graph_objects.Trace` for this figure to have
         """
         super().__init__(data = data, **kwargs)
+        self.update_layout(showlegend=False)
         self.update_layout(
             scene_aspectmode='cube',
         )
