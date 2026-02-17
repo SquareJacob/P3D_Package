@@ -402,6 +402,114 @@
 </pre></div>
 </div>
 </section>
+<section id="interactions-between-buttons-and-text">
+<h2>Interactions between buttons and text<a class="headerlink" href="#interactions-between-buttons-and-text" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">P3D.webpage</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">p3w</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">app</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Webpage</span><span class="p">()</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">button</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;wow&#39;</span><span class="p">,</span> <span class="nb">id</span> <span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span> <span class="c1">#Changing &#39;wow&#39; will change text on button</span>
+<span class="linenos"> 6</span><span class="n">app</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos"> 7</span>    <span class="n">button</span><span class="p">,</span>
+<span class="linenos"> 8</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;bee&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
+<span class="linenos"> 9</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;boo&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">),</span>
+<span class="linenos">10</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;bro&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;3&#39;</span><span class="p">),</span>
+<span class="linenos">11</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;ble&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;4&#39;</span><span class="p">)</span>
+<span class="linenos">12</span><span class="p">]</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="c1">#function for on_click</span>
+<span class="linenos">15</span><span class="k">def</span><span class="w"> </span><span class="nf">funny</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">,</span> <span class="n">text3</span><span class="p">,</span> <span class="n">text4</span><span class="p">):</span> <span class="c1">#n_clicks is always first argument, then other_inputs, then states</span>
+<span class="linenos">16</span>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_clicks</span><span class="si">}</span><span class="s2">, wow!&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text3</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">text4</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1">#outputs in order</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="n">button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span>
+<span class="linenos">19</span>    <span class="n">app</span> <span class="o">=</span> <span class="n">app</span><span class="p">,</span> 
+<span class="linenos">20</span>    <span class="n">func</span> <span class="o">=</span> <span class="n">funny</span><span class="p">,</span> 
+<span class="linenos">21</span>    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]],</span> 
+<span class="linenos">22</span>    <span class="n">other_inputs</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]],</span> 
+<span class="linenos">23</span>    <span class="n">states</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]],</span> 
+<span class="linenos">24</span>    <span class="n">starting_call</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">#Setting this to true will cause the on_click function to be triggered on page load</span>
+<span class="linenos">25</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="interactions-between-buttons-and-text-with-interval-updates">
+<h2>Interactions between buttons and text, with interval updates<a class="headerlink" href="#interactions-between-buttons-and-text-with-interval-updates" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">P3D.webpage</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">p3w</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
+<span class="linenos"> 3</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">app</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Webpage</span><span class="p">()</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="n">interval</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Interval</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="linenos"> 8</span><span class="n">button</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s1">&#39;Set to 5&#39;</span><span class="p">,</span> <span class="nb">id</span> <span class="o">=</span> <span class="s1">&#39;btn&#39;</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="n">app</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">10</span>    <span class="n">interval</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="c1">#Notice that both interval and its value need to be in layout</span>
+<span class="linenos">11</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;bee&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
+<span class="linenos">12</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;boo&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">),</span>
+<span class="linenos">13</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;bro&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;3&#39;</span><span class="p">),</span>
+<span class="linenos">14</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="s1">&#39;ble&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;4&#39;</span><span class="p">),</span>
+<span class="linenos">15</span>    <span class="n">button</span><span class="p">,</span>
+<span class="linenos">16</span>    <span class="n">p3w</span><span class="o">.</span><span class="n">Slider</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;slider&#39;</span><span class="p">,</span> <span class="n">marks</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">21</span><span class="p">)})</span>
+<span class="linenos">17</span><span class="p">]</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="c1">#function for on_tick</span>
+<span class="linenos">20</span><span class="k">def</span><span class="w"> </span><span class="nf">funny</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">text3</span><span class="p">,</span> <span class="n">text4</span><span class="p">):</span> <span class="c1">#value is always first argument, then other_inputs, then states</span>
+<span class="linenos">21</span>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">, wow!&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text3</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">text4</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1">#outputs in order</span>
+<span class="linenos">22</span>            <span class="c1">#np.round is used to deal with slight errors in floats by rounding to 5 decimal places</span>
+<span class="linenos">23</span>            <span class="c1">#If you are curious, remove it, and and then let the page run while slowly changing the slider</span>
+<span class="linenos">24</span>            <span class="c1">#You will see values that show the floating point error</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="n">interval</span><span class="o">.</span><span class="n">on_tick</span><span class="p">(</span>
+<span class="linenos">27</span>    <span class="n">app</span> <span class="o">=</span> <span class="n">app</span><span class="p">,</span>
+<span class="linenos">28</span>    <span class="n">func</span> <span class="o">=</span> <span class="n">funny</span><span class="p">,</span> 
+<span class="linenos">29</span>    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]],</span> 
+<span class="linenos">30</span>    <span class="n">other_inputs</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]],</span> 
+<span class="linenos">31</span>    <span class="n">states</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]],</span> 
+<span class="linenos">32</span>    <span class="n">starting_call</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#Setting this to true will cause the on_click function to be triggered on page load</span>
+<span class="linenos">33</span><span class="p">)</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="c1">#This makes it so that when the button is clicked, the value in interval is set to 5</span>
+<span class="linenos">36</span><span class="k">def</span><span class="w"> </span><span class="nf">click</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">):</span>
+<span class="linenos">37</span>    <span class="k">return</span> <span class="mi">5</span>
+<span class="linenos">38</span><span class="n">button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">click</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">interval</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">]])</span>
+<span class="linenos">39</span><span class="c1">#Notice that to update the value, we cannot update interval.value directly for immediate updates</span>
+<span class="linenos">40</span><span class="c1">#We have to use callbacks with interval.value_id</span>
+<span class="linenos">41</span>
+<span class="linenos">42</span><span class="c1">#this callback sets the step of the interval to be equal to the value of the slider</span>
+<span class="linenos">43</span><span class="nd">@app</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Input</span><span class="p">(</span><span class="s2">&quot;slider&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">))</span>
+<span class="linenos">44</span><span class="k">def</span><span class="w"> </span><span class="nf">stepper</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<span class="linenos">45</span>    <span class="n">interval</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">v</span>
+<span class="linenos">46</span>
+<span class="linenos">47</span>
+<span class="linenos">48</span>
+<span class="linenos">49</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="basic-example-of-being-able-to-upload-a-file">
+<h2>Basic example of being able to upload a file<a class="headerlink" href="#basic-example-of-being-able-to-upload-a-file" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">P3D.webpage</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">p3w</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">html</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="n">app</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Webpage</span><span class="p">()</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">upload</span> <span class="o">=</span> <span class="n">p3w</span><span class="o">.</span><span class="n">Upload</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="s1">&#39;upload-data&#39;</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="n">app</span><span class="o">.</span><span class="n">layout</span><span class="o">=</span> <span class="p">[</span>
+<span class="linenos"> 8</span>    <span class="n">upload</span><span class="p">,</span>
+<span class="linenos"> 9</span>    <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+<span class="linenos">10</span><span class="p">]</span>
+<span class="linenos">11</span><span class="k">def</span><span class="w"> </span><span class="nf">use_file</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">last_modified</span><span class="p">):</span>
+<span class="linenos">12</span>    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;The file </span><span class="se">\&#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1"> was last updated </span><span class="si">{</span><span class="n">last_modified</span><span class="si">}</span><span class="s1"> seconds after 1970&#39;</span>
+<span class="linenos">13</span>    
+<span class="linenos">14</span><span class="n">upload</span><span class="o">.</span><span class="n">on_upload</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">use_file</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span><span class="p">]])</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -441,6 +549,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#intersection-of-2-planes-with-dash-table">Intersection of 2 planes with Dash Table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#text-rendered-fancily-and-on-graph">Text rendered fancily and on graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-dash-slider">Basic Dash Slider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-between-buttons-and-text">Interactions between buttons and text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-between-buttons-and-text-with-interval-updates">Interactions between buttons and text, with interval updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-example-of-being-able-to-upload-a-file">Basic example of being able to upload a file</a></li>
 </ul>
 </li>
 </ul>

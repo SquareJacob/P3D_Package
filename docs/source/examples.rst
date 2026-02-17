@@ -49,3 +49,24 @@ Basic Dash Slider
 .. literalinclude:: ../examples/slider_dash.py
    :language: python
    :linenos:
+
+Interactions between buttons and text
+-----------------------------------------------------------------
+
+.. literalinclude:: ../examples/buttons_with_text.py
+   :language: python
+   :linenos:
+
+Interactions between buttons and text, with interval updates
+-----------------------------------------------------------------
+
+.. literalinclude:: ../examples/text_buttons_interval.py
+   :language: python
+   :linenos:
+
+Basic example of being able to upload a file
+-----------------------------------------------------------------
+
+.. literalinclude:: ../examples/upload_basic.py
+   :language: python
+   :linenos:
