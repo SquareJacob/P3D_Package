@@ -159,4 +159,47 @@ class _Line2d(go.Scatter, Line):
             """
             super().__init__(x = x, y = y, mode='lines', **kwargs)
            
-    
+class Scatter():
+    def __new__(cls, x:np.ndarray[np.floating], y:np.ndarray[np.floating], z:np.ndarray[np.floating] = None, **kwargs):
+        """
+        Creates a new 2d (:class:`plotly.graph_objects.Scatter`) or 3d (:class:`plotly.graph_objects.Scatter3d`) scatter plot.
+        
+        Parameters
+        ----------
+        x,y,z
+            1d arrays all of the same length. 
+            If z is provided, the plot is 3d, else it is 2d.
+        """
+        if cls is Scatter:
+            if z is None:
+                return _Scatter2d(x, y, **kwargs)
+            else:
+                return _Scatter3d(x, y, z, **kwargs)
+                
+        return super().__new__(cls)
+
+class _Scatter3d(go.Scatter3d, Scatter):
+    def __init__(self, x:np.ndarray[np.floating], y:np.ndarray[np.floating], z:np.ndarray[np.floating], **kwargs):
+        """
+        Creates a 3D scatter plot
+
+        Parameters
+        ----------
+        x,y,z
+            1d arrays all of the same length.
+            Each ordered triple is a point on the line
+        """
+        super().__init__(x = x, y = y, z = z, mode = 'markers', **kwargs)
+
+class _Scatter2d(go.Scatter, Scatter):
+        def __init__(self, x:np.ndarray[np.floating], y:np.ndarray[np.floating], **kwargs):
+            """
+            Creates a 2D scatter plot
+
+            Parameters
+            ----------
+            x,y
+                1d arrays all of the same length.
+                Each ordered pair is a point on the line
+            """
+            super().__init__(x = x, y = y, mode = 'markers', **kwargs)
